@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "admin" ALTER COLUMN "senha" SET DATA TYPE VARCHAR(80);

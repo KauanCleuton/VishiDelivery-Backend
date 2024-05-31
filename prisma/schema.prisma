@@ -1,0 +1,81 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  idUser     Int       @id @default(autoincrement())
+  name       String?   @db.VarChar(45)
+  phone      String?   @db.Char(16)
+  Pedidos    Pedidos[]
+  address    address[]
+}
+
+model Pedidos {
+  idPedidos     Int         @id @default(autoincrement())
+  quantity      Int?
+  created_at    DateTime?
+  observation   String?     @db.VarChar(120) @default("")
+  title         String      @db.VarChar(160)
+  total_price   Float
+  user_id       Int
+  payment       String?     @db.VarChar(20)
+  User          User        @relation(fields: [user_id], references: [idUser])
+  OrderItems    OrderItems[]
+}
+
+model Category {
+  idCategory   Int        @id @default(autoincrement())
+  name         String?    @db.VarChar(45)
+  Products     Products[]
+}
+
+model Products {
+  idProducts    Int        @id @default(autoincrement())
+  category_id   Int?
+  title         String?    @db.VarChar(45)
+  description   String?    @db.VarChar(120) @default("")
+  price         Float
+  file_url      String?    @db.VarChar(45) @default("")
+  Category      Category?  @relation(fields: [category_id], references: [idCategory])
+  OrderItems    OrderItems[]
+}
+
+model address {
+  idAddress     Int      @id @default(autoincrement())
+  user_id       Int?
+  road          String?  @db.VarChar(45)
+  house_number  String?  @db.Char(13)
+  neighborhood  String?  @db.VarChar(45)
+  city          String?  @db.VarChar(45)
+  complement    String?  @db.VarChar(45) @default("")
+  User          User?    @relation(fields: [user_id], references: [idUser])
+}
+
+model admin {
+  idAdmin   Int      @id @default(autoincrement())
+  name      String?  @db.VarChar(45)
+  email     String?  @db.VarChar(45)
+  senha     String?  @db.VarChar(80)
+}
+
+model OrderItems {
+  idOrderItems  Int       @id @default(autoincrement())
+  order_id      Int?
+  product_id    Int?
+  quantity      Int?
+  price         Float?
+  Pedidos       Pedidos?  @relation(fields: [order_id], references: [idPedidos])
+  Products      Products? @relation(fields: [product_id], references: [idProducts])
+}
+
+model DeliveryPerson {
+  idDeliveryPerson  Int      @id @default(autoincrement())
+  name              String?  @db.VarChar(45)
+  phone             String?  @db.Char(16)
+  vehicle           String?  @db.VarChar(45) @default("")
+}
